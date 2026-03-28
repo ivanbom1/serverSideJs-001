@@ -1,5 +1,5 @@
 import express from "express" // new js
-
+import studentRoutes from "./routes/studentsRoutes.js"
 //const express = require("express") // old js
 
 import cors from "cors"
@@ -7,17 +7,13 @@ import fs from "fs"
 
 const app = express()
 app.use(cors())
+app.use("/api/students", studentRoutes)
 const port = 3000
 
 app.get("/", (req, res) => {
 	res.json({ msg: "Hello World!" })
 })
 
-app.get("/students", (req, res) => {
-    const data = fs.readFileSync("./students.json", "utf-8")
-    const students = JSON.parse(data)
-    res.json(students)
-})
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`)
