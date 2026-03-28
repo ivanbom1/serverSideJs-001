@@ -1,71 +1,177 @@
-# Exercise 01 — File System & JSON
+## Project Overview
 
-## Goal
+This project implements a **Student Management API** with a frontend interface. It demonstrates core backend concepts including routing, middleware, HTTP methods, and proper API design.
 
-Read a JSON file, transform its data, and write the result to a Markdown file — all using Node.js built-in modules, no `npm install` needed.
+## Features
 
-## What you will build
+- **RESTful API** — Full CRUD operations on student data
+- **Express.js** — Lightweight Node.js web framework
+- **CORS** — Cross-Origin Resource Sharing for frontend-backend communication
+- **ES6 Modules** — Modern JavaScript import/export syntax
+- **Error Handling** — Try-catch blocks and appropriate HTTP status codes
 
-A script that reads `students.json` and generates a `student_report.md` file.
+## Project Structure
 
-## Run it
-
-```bash
-node index.js
+```
+serverSideJs-001/
+├── controllers/
+│   └── studentsController.js    # Request handlers
+├── services/
+│   └── studentsService.js       # Business logic
+├── routes/
+│   └── studentsRoutes.js        # Route definitions
+├── FONT/                         # Frontend files
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+├── students.js                   # Student data
+├── index.js                      # Server entry point
+├── package.json
+└── README.md
 ```
 
-If it works, you should see a success message in the terminal and a new `student_report.md` file appear next to `index.js`.
+## Architecture Layers
 
-## Modules you will need
+### Routes (`studentsRoutes.js`)
+Defines URL paths and maps them to controller handlers.
 
-| Module | What it does                            |
-| ------ | --------------------------------------- |
-| `fs`   | Read and write files on your filesystem |
-| `path` | Build file paths that work on any OS    |
+### Controller (`studentsController.js`)
+Handles HTTP requests and responses. Calls services and returns appropriate status codes.
 
-Both are built into Node.js — just `require` them, no install needed.
+### Service (`studentsService.js`)
+Contains business logic. Performs data operations, validations, and calculations.
 
-## Key functions
+## API Endpoints
 
-- `fs.readFileSync(filePath, 'utf-8')` — reads a file and returns its contents as a string
-- `fs.writeFileSync(filePath, content, 'utf-8')` — writes a string to a file (creates it if it doesn't exist)
-- `JSON.parse(string)` — converts a JSON string into a JavaScript object
-- `path.join(__dirname, 'filename')` — builds a safe absolute path relative to the current script
+### GET /api/students
+Retrieves all students.
 
-## Steps
-
-1. Require the `fs` and `path` modules
-2. Read `students.json` using `fs.readFileSync`
-3. Parse the JSON string into a JavaScript array using `JSON.parse`
-4. Build a Markdown string by looping over the students array
-5. Write the result to `student_report.md` using `fs.writeFileSync`
-
-## Expected output
-
-The generated `student_report.md` should look like this:
-
-```markdown
-# Student Report
-
-Generated on: 20/03/2026
-
-## Summary
-
-Total Students: 3
-
-## Student Details
-
-### Alice Martin
-
-- **Email:** alice.martin@epita.fr
-- **Major:** Computer Science
-- **GPA:** 3.8
-- **ID:** 1
-  ...
+**Response:**
+```json
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "Alice Martin",
+      "email": "alice.martin@epita.fr",
+      "major": "Computer Science",
+      "gpa": 3.8
+    }
+  ]
+}
 ```
 
-## Hints
+### GET /api/students/:id
+Retrieves a single student by ID.
 
-- `__dirname` is a Node.js variable that always points to the folder where your script lives — useful for building reliable file paths
-- `Array.forEach()` lets you loop over each student and append their info to your Markdown string
-- Template literals (backticks) make it easy to embed variables inside strings: `` `Hello ${name}` ``
+**Response:** Student object or 404 error.
+
+### POST /api/students
+Creates a new student.
+
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "major": "Computer Science",
+  "gpa": 3.7
+}
+```
+
+**Response:** 201 Created with new student object.
+
+### PUT /api/students/:id
+Updates an existing student.
+
+**Request Body:** Partial or complete student object.
+
+**Response:** Updated student object or 404 error.
+
+### DELETE /api/students/:id
+Deletes a student.
+
+**Response:** 204 No Content.
+
+## Technologies
+
+- **Node.js** — JavaScript runtime
+- **Express.js** — Web framework
+- **CORS** — Cross-origin middleware
+- **ES6 Modules** — Modern JavaScript
+
+## Setup & Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/ivanbom1/serverSideJs-001.git
+   cd serverSideJs-001
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the server:**
+   ```bash
+   node index.js
+   ```
+   Server runs on `http://localhost:3000`
+
+4. **Open frontend:**
+   Navigate to `FONT/index.html` in your browser.
+
+## Key Concepts Demonstrated
+
+### Middleware
+- `express.json()` — Parses JSON request bodies
+- `cors()` — Enables cross-origin requests
+
+### HTTP Methods
+- **GET** — Retrieve data
+- **POST** — Create new data (status 201)
+- **PUT** — Update existing data (status 200)
+- **DELETE** — Remove data (status 204)
+
+### Status Codes
+- **200** — OK (successful GET, PUT, POST)
+- **201** — Created (POST success)
+- **204** — No Content (DELETE success)
+- **404** — Not Found
+- **500** — Server Error
+
+### Error Handling
+Try-catch blocks catch errors and return appropriate responses:
+```javascript
+try {
+    const data = studentService.getAllStudents()
+    res.json(data)
+} catch (error) {
+    res.status(500).json({ error: error.message })
+}
+```
+
+## Dependencies
+
+```json
+{
+  "dependencies": {
+    "express": "^4.x.x",
+    "cors": "^2.x.x"
+  }
+}
+```
+
+## Branch Notes
+
+This is the **02** branch, featuring:
+- Refactored code with separate controllers and services
+- Proper error handling
+- CORS middleware enabled
+- ES6 module imports
+
+## Author
+
+Ivan BOMKO
+
