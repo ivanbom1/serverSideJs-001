@@ -7,6 +7,7 @@ import fs from "fs"
 
 const app = express()
 app.use(cors())
+console.log("Routes loaded:", studentRoutes)
 app.use("/api/students", studentRoutes)
 const port = 3000
 
