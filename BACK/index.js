@@ -1,25 +1,27 @@
-import express from "express" // new js
-import studentRoutes from "./routes/studentsRoutes.js"
-//const express = require("express") // old js
+import express from "express";
+import studentRoutes from "./routes/studentsRoutes.js";
+import cors from "cors";
+import connectMongoDB from "./config/db.js";
 
-import cors from "cors"
-import fs from "fs"
-import connectMongoDB from ".config/db"
+const app = express();
 
-const app = express()
-app.use(cors())
-console.log("Routes loaded:", studentRoutes)
-app.use("/api/students", studentRoutes)
-const port = 3000
+app.use(cors());
+app.use(express.json()); // Add this to parse JSON bodies
+
+// Connect to MongoDB before starting server
+connectMongoDB();
+
+app.use("/api/students", studentRoutes);
+
+const port = 3000;
 
 app.get("/", (req, res) => {
-	res.json({ msg: "Hello World!" })
-})
-
+  res.json({ msg: "Hello World!" });
+});
 
 app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
 
 
 // NODEMON
