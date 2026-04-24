@@ -22,8 +22,11 @@ export const createStudentService = async (data) => {
 };
 
 
-export const udpateStudentService = async (id, data) => {
-    return await User.findByIdAndUpdate(id, data, { new: true });
+export const updateStudentService = async (id, data) => {
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, SALT_ROUNDS);
+  }
+  return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
 

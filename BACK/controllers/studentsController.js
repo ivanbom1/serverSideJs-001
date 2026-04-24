@@ -1,17 +1,18 @@
 import * as studentService from "../services/studentsService.js"
+import * as studentServiceMongoDB from "../services/studentServiceMongoDB.js"
 
-export const getAllStudents = (req, res) => {
+export const getAllStudents = async (req, res) => {
     try {
-        const students = studentService.getAllStudents()
+        const students = await studentServiceMongoDB.findAllStudents()
         res.json({ students })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
 }
 
-export const getStudentById = (req, res) => {
+export const getStudentById = async (req, res) => {
     try {
-        const student = studentService.getStudentById(req.params.id)
+        const student = await studentServiceMongoDB.findAllStudentsById(req.params.id)
         if (!student) return res.status(404).json({ error: "Student not found" })
         res.json(student)
     } catch (error) {
@@ -19,18 +20,18 @@ export const getStudentById = (req, res) => {
     }
 }
 
-export const createStudent = (req, res) => {
+export const createStudent = async (req, res) => {
     try {
-        const newStudent = studentService.createStudent(req.body)
+        const newStudent = await studentServiceMongoDB.createStudentService(req.body)
         res.status(201).json(newStudent)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 }
 
-export const updateStudent = (req, res) => {
+export const updateStudent = async (req, res) => {
     try {
-        const updated = studentService.updateStudent(req.params.id, req.body)
+        const updated = await studentServiceMongoDB.updateStudentService(req.params.id, req.body)
         if (!updated) return res.status(404).json({ error: "Student not found" })
         res.json(updated)
     } catch (error) {
@@ -38,9 +39,9 @@ export const updateStudent = (req, res) => {
     }
 }
 
-export const deleteStudent = (req, res) => {
+export const deleteStudent = async (req, res) => {
     try {
-        studentService.deleteStudent(req.params.id)
+        await studentServiceMongoDB.deleteStudentService(req.params.id)
         res.status(204).send()
     } catch (error) {
         res.status(500).json({ error: error.message })

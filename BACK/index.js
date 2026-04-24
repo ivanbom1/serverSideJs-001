@@ -4,6 +4,7 @@ import studentRoutes from "./routes/studentsRoutes.js"
 
 import cors from "cors"
 import fs from "fs"
+import connectMongoDB from ".config/db"
 
 const app = express()
 app.use(cors())
