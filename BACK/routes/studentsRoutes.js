@@ -1,13 +1,21 @@
 import express from "express"
 //import * as studentController from "../controllers/studentsController.js"
 import * as studentControllerMongoDB from "../controllers/studentsController.js"
+import multer from "../middleware/multer-config.js";
 
-const router = express.Router()
+const studentRouter = express.Router()
 
-router.get("/", studentControllerMongoDB.getAllStudents)
-router.get("/:id", studentControllerMongoDB.getStudentById)
-router.post("/", studentControllerMongoDB.createStudent)
-router.put("/:id", studentControllerMongoDB.updateStudent)
-router.delete("/:id", studentControllerMongoDB.deleteStudent)
+studentRouter.post("/signup", multer, (req, res) => {
+  console.log("req.file:", req.file);
+  console.log("req.body:", req.body);
 
-export default router
+  res.send("login");
+});
+
+studentRouter.get("/", studentControllerMongoDB.getAllStudents)
+studentRouter.get("/:id", studentControllerMongoDB.getStudentById)
+studentRouter.post("/", studentControllerMongoDB.createStudent)
+studentRouter.put("/:id", studentControllerMongoDB.updateStudent)
+studentRouter.delete("/:id", studentControllerMongoDB.deleteStudent)
+
+export default studentRouter

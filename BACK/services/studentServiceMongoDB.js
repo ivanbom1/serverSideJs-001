@@ -1,15 +1,15 @@
 
-import User from "../models/userModel";
+import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
 
 export const findAllStudents = () => {
-    return await User.find({});
+    return User.find({});
 };
 
 
 export const findAllStudentsById = (id) => {
-    return await User.findById(id);
+    return User.findById(id);
 };
 
 
@@ -31,5 +31,5 @@ export const updateStudentService = async (id, data) => {
 
 
 export const deleteStudentService = (id) => {
-    return await User.findByIdAndDelete(id);
+    return User.findByIdAndDelete(id);
 };  
