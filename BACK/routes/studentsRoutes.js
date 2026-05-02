@@ -5,12 +5,19 @@ import multer from "../middleware/multer-config.js";
 
 const studentRouter = express.Router()
 
-studentRouter.post("/signup", multer, (req, res) => {
-  console.log("req.file:", req.file);
-  console.log("req.body:", req.body);
+studentRouter.post("/signup",
+    (req, res, next) => {
+    multerConfig(req, res, (err) => {
+        
+        if (err) return res.status(400).json({ error: err.message });
+        
+        next();
+    });
+  },
 
-  res.send("login");
-});
+  validateStudent,
+  studentControllerMongoDB.createStudent
+);
 
 studentRouter.get("/", studentControllerMongoDB.getAllStudents)
 studentRouter.get("/:id", studentControllerMongoDB.getStudentById)

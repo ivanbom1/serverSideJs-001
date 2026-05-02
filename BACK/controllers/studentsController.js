@@ -22,12 +22,27 @@ export const getStudentById = async (req, res) => {
 
 export const createStudent = async (req, res) => {
     try {
+
         const newStudent = await studentServiceMongoDB.createStudentService(req.body)
-        res.status(201).json(newStudent)
+        const token = jwt.sign(
+            { id: newStudent._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        )
+
+        const toStudentDTO = (student) => ({
+            id: student._id,
+            email: student.email,
+        })
+
+        res.status(201).json({ token, user: toStudentDTO(newStudent) })
+  
     } catch (error) {
+
         res.status(400).json({ error: error.message })
     }
 }
+
 
 export const updateStudent = async (req, res) => {
     try {
