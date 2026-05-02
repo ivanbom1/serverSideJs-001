@@ -24,12 +24,18 @@ export const createStudentService = async (data) => {
 
 export const updateStudentService = async (id, data) => {
   if (data.password) {
-    data.password = await bcrypt.hash(data.password, SALT_ROUNDS);
+    data.password = await bcrypt.hash(data.password, parseInt(process.env.SALT_ROUNDS)); // An idea to not expose an amount of SALT ROUNDS for pwd
   }
   return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
 
-export const deleteStudentService = (id) => {
-    return User.findByIdAndDelete(id);
-};  
+export const deleteStudent = async (req, res) => {
+    try {
+        const deleted = await studentServiceMongoDB.deleteStudentService(req.params.id)
+        if (!deleted) return res.status(404).json({ error: "Student not found" })
+        res.status(204).send()
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+};
