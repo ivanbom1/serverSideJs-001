@@ -20,11 +20,11 @@ export const getAllStudents = async (req, res) => {
 
 export const getStudentById = async (req, res) => {
     try {
-        const student = await studentServiceMongoDB.findAllStudentsById(req.params.id)
-        if (!student) return res.status(404).json({ error: "Student not found" })
-        res.json(student)
+        const student = await studentServiceMongoDB.findAllStudentsById(req.params.id);
+        if (!student) return res.status(404).json({ error: "Student not found" });
+        res.json(student);
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({ error: error.message });
     }
 }
 
@@ -60,17 +60,17 @@ export const updateStudent = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
-}
+};
 
 
 export const deleteStudent = async (req, res) => {
-    console.log("1. deleteStudent called")
+    console.log("1. deleteStudent called");
     try {
-        const deleted = await studentServiceMongoDB.deleteStudentService(req.params.id)
-        if (!deleted) return res.status(404).json({ error: "Student not found" })
-        res.status(204).send()
+        const deleted = await studentServiceMongoDB.deleteStudentService(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Student not found" });
+        res.status(204).send();
     } catch (error) {
-        console.log("6. error:", error)
-        res.status(500).json({ error: error.message })
+        console.log("6. error:", error);
+        res.status(500).json({ error: error.message });
     }
-}
+};
