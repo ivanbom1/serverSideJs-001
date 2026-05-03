@@ -1,5 +1,7 @@
 import * as studentService from "../services/studentsService.js"
 import * as studentServiceMongoDB from "../services/studentServiceMongoDB.js"
+import jwt from "jsonwebtoken"
+
 
 export const getAllStudents = async (req, res) => {
     try {
@@ -10,6 +12,7 @@ export const getAllStudents = async (req, res) => {
     }
 }
 
+
 export const getStudentById = async (req, res) => {
     try {
         const student = await studentServiceMongoDB.findAllStudentsById(req.params.id)
@@ -19,6 +22,7 @@ export const getStudentById = async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 }
+
 
 export const createStudent = async (req, res) => {
     try {
@@ -54,11 +58,17 @@ export const updateStudent = async (req, res) => {
     }
 }
 
+
 export const deleteStudent = async (req, res) => {
+    console.log("1. deleteStudent called")
+    console.log("2. id:", req.params.id)
     try {
-        await studentServiceMongoDB.deleteStudentService(req.params.id)
+        const deleted = await studentServiceMongoDB.deleteStudentService(req.params.id)
+        if (!deleted) return res.status(404).json({ error: "Student not found" })
+        console.log("5. sending 204")
         res.status(204).send()
     } catch (error) {
+        console.log("6. error:", error)
         res.status(500).json({ error: error.message })
     }
 }

@@ -10,7 +10,8 @@ export const validateStudent = (req, res, next) => {
     };
 
 
-    if (!name)     return reject("Name is required");
+    if (!name)     return reject("Name is required"); 
+    if (!name || !/^[a-zA-Z\s]+$/.test(name)) return reject("Name must contain only letters"); // additional validation layer, to ensure student's name has only letters
     if (!email)    return reject("Email is required");
     if (!password) return reject("Password is required");
     if (!gpa)      return reject("GPA is required");
