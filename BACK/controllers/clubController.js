@@ -1,4 +1,5 @@
 import * as clubService from "../services/clubServiceMongoDB.js"
+import { clubOwnerDTO } from "../dto/clubDTO.js"
 
 
 export const getAllClubs = async (req, res) => {
@@ -15,28 +16,35 @@ export const getAllClubs = async (req, res) => {
 
 export const getClubById = async (req, res) => {
     try {
-        const club = await clubService.findAllClubsById(req.params.id);
-        
-        if (!club) return res.status(404).json({ error: "Club was not found!"});
-        res.json(club);
+        const club = await clubService.findClubById(req.params.id)
+        if (!club) return res.status(404).json({ error: "Club not found" })
+
+        const isOwner = club.president.toString() === req.auth.userId 
+        res.json(isOwner ? clubOwnerDTO(club) : clubPublicDTO(club)) // send OwnerDTO if owner requests it, and PublicDTO if not
     } catch (error) {
-        res.status(500).json({ error: error.message});
+        res.status(500).json({ error: error.message })
     }
-};
+}
 
 
 export const createClub = async (req, res) => {
     try {
-        const { name, category, president, capacity} = req.body;
-        const newClub = { name, category, president, capacity};
+        const { name, category, capacity, description } = req.body;
+        
+        const newClub = {
+            name,
+            category,
+            capacity,
+            description,
+            president: req.auth.userId,
+            members: [req.auth.userId]
+        };
+
         const createdClub = await clubService.createClubService(newClub);
-        // add registration permission only to logged users. In our case, if user exists, he can register club on himself.
-
-        // add club DTO
-
-        res.status(201).json({createdClub});
+        res.status(201).json(clubOwnerDTO(createdClub));
+        
     } catch (error) {
-        res.status(500).json({ message: error.message});
+        res.status(500).json({ message: error.message });
     }
 };
 

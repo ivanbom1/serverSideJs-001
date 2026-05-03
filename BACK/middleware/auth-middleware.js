@@ -22,3 +22,4 @@ export const authCheck = (req, res, next) => {
     req.auth = { userId };
     next();
 };
+

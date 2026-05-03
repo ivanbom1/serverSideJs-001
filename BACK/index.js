@@ -4,6 +4,8 @@ import connectMongoDB from "./config/db.js";
 
 import studentRouter from "./routes/studentsRoutes.js";
 
+import clubRouter from "./routes/clubRoute.js"
+
 const app = express();
 const port = 3000;
 
@@ -14,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static("public"))
 app.use("/api/students", studentRouter);
+app.use("/api/clubs", clubRouter)
 
 app.get("/", (req, res) => {
     res.send("Server is running ...");
