@@ -4,13 +4,22 @@ import jwt from "jsonwebtoken"
 
 
 export const getAllStudents = async (req, res) => {
-    try {
-        const students = await studentServiceMongoDB.findAllStudents()
-        res.json({ students })
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
-}
+  try {
+    const students = await findAllStudents();
+
+    // CREATE DTO
+    const toStudentDTO = (student) => ({
+      id: student._id,      
+      email: student.email,
+    });
+
+    const studentsDTO = students.map(toStudentDTO);
+    res.status(200).json(studentsDTO);
+
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
 
 
 export const getStudentById = async (req, res) => {
@@ -26,26 +35,25 @@ export const getStudentById = async (req, res) => {
 
 export const createStudent = async (req, res) => {
     try {
-
-        const newStudent = await studentServiceMongoDB.createStudentService(req.body)
-        const token = jwt.sign(
-            { id: newStudent._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "24h" }
-        )
+        const { name, email, password, gpa, major } = req.body;
+        const newStudent = { name, email, password, gpa, major };
+        const loggedUser = await createStudentService(newStudent);
+        const token = jwt.sign({ id: loggedUser._id }, process.env.JWT_SECRET, {
+        expiresIn: "24h",
+        }); // signed token with user's id ONLY
 
         const toStudentDTO = (student) => ({
-            id: student._id,
-            email: student.email,
-        })
-
-        res.status(201).json({ token, user: toStudentDTO(newStudent) })
-  
+        id: student._id,
+        email: student.email,
+        });
+        
+        res.status(201).json({ token, user: toStudentDTO(loggedUser) });
+    
     } catch (error) {
-
-        res.status(400).json({ error: error.message })
+        
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 
 export const updateStudent = async (req, res) => {
