@@ -33,7 +33,7 @@ export const createStudent = async (req, res) => {
     try {
         const { name, email, password, gpa, major } = req.body;
         const newStudent = { name, email, password, gpa, major };
-        const loggedUser = await createStudentService(newStudent);
+        const loggedUser = await studentServiceMongoDB.createStudentService(newStudent);
         const token = jwt.sign({ id: loggedUser._id }, process.env.JWT_SECRET, {
         expiresIn: "24h",
         }); // signed token with user's id ONLY

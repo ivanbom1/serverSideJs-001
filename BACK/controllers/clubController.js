@@ -1,5 +1,5 @@
 import * as clubService from "../services/clubServiceMongoDB.js"
-import { clubOwnerDTO } from "../dto/clubDTO.js"
+import { clubOwnerDTO, clubPublicDTO } from "../dto/club-dto.js"
 
 
 export const getAllClubs = async (req, res) => {
@@ -16,7 +16,7 @@ export const getAllClubs = async (req, res) => {
 
 export const getClubById = async (req, res) => {
     try {
-        const club = await clubService.findClubById(req.params.id)
+        const club = await clubService.findAllClubsById(req.params.id)
         if (!club) return res.status(404).json({ error: "Club not found" })
 
         const isOwner = club.president.toString() === req.auth.userId 

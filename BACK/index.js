@@ -4,7 +4,7 @@ import connectMongoDB from "./config/db.js";
 
 import studentRouter from "./routes/studentsRoutes.js";
 
-import clubRouter from "./routes/clubRoute.js"
+import clubRouter from "./routes/clubRoutes.js"
 
 const app = express();
 const port = 3000;

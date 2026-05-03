@@ -18,8 +18,8 @@ export const authCheck = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.RANDOM_SECRET_WORD);
     
     // 4. Extract userId and attach to request
-    const userId = decodedToken.userId;
-    req.auth = { userId };
+    const id = decodedToken.id;
+    req.auth = { id };
     next();
 };
 
