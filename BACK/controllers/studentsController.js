@@ -1,19 +1,15 @@
 import * as studentService from "../services/studentsService.js"
 import * as studentServiceMongoDB from "../services/studentServiceMongoDB.js"
 import jwt from "jsonwebtoken"
+import * as dto from "../dto/student-dto.js"
 
 
 export const getAllStudents = async (req, res) => {
   try {
-    const students = await findAllStudents();
+    const students = await studentServiceMongoDB.findAllStudents();
 
-    // CREATE DTO
-    const toStudentDTO = (student) => ({
-      id: student._id,      
-      email: student.email,
-    });
 
-    const studentsDTO = students.map(toStudentDTO);
+    const studentsDTO = students.map(dto.studentPrivateDTO); // In theory we have to use Public DTO, but as we want to see grades, I placed private here
     res.status(200).json(studentsDTO);
 
   } catch (error) {
@@ -50,7 +46,7 @@ export const createStudent = async (req, res) => {
         res.status(201).json({ token, user: toStudentDTO(loggedUser) });
     
     } catch (error) {
-        
+
         res.status(500).json({ message: error.message });
     }
 };
@@ -69,11 +65,9 @@ export const updateStudent = async (req, res) => {
 
 export const deleteStudent = async (req, res) => {
     console.log("1. deleteStudent called")
-    console.log("2. id:", req.params.id)
     try {
         const deleted = await studentServiceMongoDB.deleteStudentService(req.params.id)
         if (!deleted) return res.status(404).json({ error: "Student not found" })
-        console.log("5. sending 204")
         res.status(204).send()
     } catch (error) {
         console.log("6. error:", error)
