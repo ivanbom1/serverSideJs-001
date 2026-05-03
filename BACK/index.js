@@ -1,58 +1,25 @@
 import express from "express";
-import studentRoutes from "./routes/studentsRoutes.js";
-import cors from "cors";
+import cors from 'cors';
 import connectMongoDB from "./config/db.js";
 
+import studentRouter from "./routes/studentsRoutes.js";
+
 const app = express();
-
-app.use(cors());
-app.use(express.json()); // Add this to parse JSON bodies
-
-// Connect to MongoDB before starting server
-connectMongoDB();
-
-app.use("/api/students", studentRoutes);
-
 const port = 3000;
 
+await connectMongoDB();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(express.static("public"))
+app.use("/api/students", studentRouter);
+
 app.get("/", (req, res) => {
-  res.json({ msg: "Hello World!" });
-});
+    res.send("Server is running ...");
+})
+
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
-
-// NODEMON
-
-// send data to the exposed endpoints
-// import data from students.json and send it to the client when they hit the endpoint
-// use postman to send data to endpoints
-
-// GET - retrieve data
-// POST - create new data
-// PUT - update existing data
-// DELETE - remove data
-// CRUD - create, read, update, delete
-
-// SEND DATA vs SEND ERROR
-// STATUS CODES - 200, 201, 400, 404
-// JSON - JavaScript Object Notation
-// res.json() - send JSON response
-// res.status() - set status code
-// res.send() - send response
-
-// TRY FRONTEND NOW before moving on
-// go to FONT folder and open index.html in the browser, check console for errors, fix them, and see the data being displayed
-
-// CORS - Cross-Origin Resource Sharing
-// npm i cors
-// app.use(cors())
-
-// REFACTORING
-// 1. Create a separate file for routes (e.g., routes.js)
-// 2. Create a separate file for controllers (e.g., controllers.js)
-// 3. Change commonJs to ES6 modules (e.g., import/export) - this will require adding "type": "module" in package.json
-
-// push to github and share the link
+	console.log(`Example app listening on port ${port}`)
+})
