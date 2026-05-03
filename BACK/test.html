@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head><title>API Test</title></head>
+<body>
+<h1>API Test Runner</h1>
+<button onclick="runTests()">Run All Tests</button>
+<pre id="output"></pre>
+
+<script>
+const BASE = "http://localhost:3000/api"
+let token = ""
+let studentId = ""
+let clubId = ""
+
+const log = (msg) => {
+  document.getElementById("output").textContent += msg + "\n"
+}
+
+async function runTests() {
+  document.getElementById("output").textContent = ""
+
+  // 1. SIGNUP
+  log("--- POST /signup ---")
+  const form = new FormData()
+  form.append("name", "TestUser")
+  form.append("email", `test${Date.now()}@test.com`)
+  form.append("password", "password123")
+  form.append("gpa", "3.5")
+  form.append("major", "Computer Science")
+  const signup = await fetch(`${BASE}/students/signup`, { method: "POST", body: form })
+  const signupData = await signup.json()
+  log(JSON.stringify(signupData, null, 2))
+  token = signupData.token
+  studentId = signupData.user?.id
+
+  if (!token) { log("❌ No token, stopping."); return }
+  log("✅ Got token")
+
+  const headers = { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+
+  // 2. GET all students
+  log("\n--- GET /students ---")
+  const allStudents = await fetch(`${BASE}/students`)
+  log(`Status: ${allStudents.status}`)
+  const studentsData = await allStudents.json()
+  log(JSON.stringify(studentsData, null, 2))
+
+  // 3. GET student by id
+  log("\n--- GET /students/:id ---")
+  const oneStudent = await fetch(`${BASE}/students/${studentId}`, { headers })
+  log(`Status: ${oneStudent.status}`)
+
+  // 4. CREATE club
+  log("\n--- POST /clubs ---")
+  const createClub = await fetch(`${BASE}/clubs`, {
+    method: "POST", headers,
+    body: JSON.stringify({ name: "Test Club", category: "Tech", capacity: 20, description: "A test club" })
+  })
+  const clubData = await createClub.json()
+  log(`Status: ${createClub.status}`)
+  log(JSON.stringify(clubData, null, 2))
+  clubId = clubData.id
+
+  // 5. GET all clubs
+  log("\n--- GET /clubs ---")
+  const allClubs = await fetch(`${BASE}/clubs`, { headers })
+  log(`Status: ${allClubs.status}`)
+  log(JSON.stringify(await allClubs.json(), null, 2))
+
+  // 6. GET club by id
+  log("\n--- GET /clubs/:id ---")
+  const oneClub = await fetch(`${BASE}/clubs/${clubId}`, { headers })
+  log(`Status: ${oneClub.status}`)
+  log(JSON.stringify(await oneClub.json(), null, 2))
+
+  // 7. UPDATE club
+  log("\n--- PUT /clubs/:id ---")
+  const updateClub = await fetch(`${BASE}/clubs/${clubId}`, {
+    method: "PUT", headers,
+    body: JSON.stringify({ description: "Updated description" })
+  })
+  log(`Status: ${updateClub.status}`)
+
+  // 8. GET clubs without token (should return 401)
+  log("\n--- GET /clubs without token (expect 401) ---")
+  const noAuth = await fetch(`${BASE}/clubs`)
+  log(`Status: ${noAuth.status} ${noAuth.status === 401 ? "✅" : "❌"}`)
+
+  // 9. DELETE club
+  log("\n--- DELETE /clubs/:id ---")
+  const deleteClub = await fetch(`${BASE}/clubs/${clubId}`, { method: "DELETE", headers })
+  log(`Status: ${deleteClub.status} ${deleteClub.status === 204 ? "✅" : "❌"}`)
+
+  log("\n--- DONE ---")
+}
+</script>
+</body>
+</html>

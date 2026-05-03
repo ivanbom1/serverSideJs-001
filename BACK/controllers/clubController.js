@@ -6,8 +6,8 @@ export const getAllClubs = async (req, res) => {
     try {
         const clubs = await clubService.findAllClubs();
 
-        // add club DTO here!
-        res.status(200).json(clubs);
+        res.status(200).json(clubs.map(clubPublicDTO))
+        
     } catch (error) {
         res.status(404).json({ message: error.message});
     }
