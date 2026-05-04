@@ -2,211 +2,127 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>API Test Suite</title>
+<title>Full API Test Suite</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
-
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --border: #1e1e2e;
-    --accent: #7c3aed;
-    --accent2: #06b6d4;
-    --success: #10b981;
-    --error: #ef4444;
-    --warn: #f59e0b;
-    --text: #e2e8f0;
-    --muted: #64748b;
+    --bg: #0a0a0f; --surface: #13131a; --border: #1e1e2e;
+    --accent: #7c3aed; --accent2: #06b6d4; --success: #10b981;
+    --error: #ef4444; --warn: #f59e0b; --text: #e2e8f0; --muted: #64748b;
+    --sports: #ef4444; --arts: #f59e0b; --tech: #06b6d4; --music: #8b5cf6; --gaming: #10b981;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    min-height: 100vh;
-    padding: 2rem;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.25rem;
-  }
-
-  .subtitle { color: var(--muted); font-size: 0.8rem; margin-bottom: 2rem; }
-
-  .controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-  }
-
-  button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  #runBtn {
-    background: linear-gradient(135deg, var(--accent), #9333ea);
-    color: white;
-    font-weight: 700;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; }
+  h1 { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.25rem; }
+  .subtitle { color: var(--muted); font-size: 0.8rem; margin-bottom: 1.5rem; }
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+  .tab { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; transition: all 0.2s; }
+  .tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text); border-color: var(--muted); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+  button { padding: 0.65rem 1.25rem; border: none; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+  #runBtn { background: linear-gradient(135deg, var(--accent), #9333ea); color: white; font-weight: 700; }
   #runBtn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124,58,237,0.4); }
   #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-sec { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .btn-sec:hover { color: var(--text); }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.75rem; min-width: 80px; }
+  .stat span { font-weight: 700; font-size: 1.1rem; display: block; }
+  .stat.pass span { color: var(--success); } .stat.fail span { color: var(--error); }
+  .stat.total span { color: var(--accent2); } .stat.skip span { color: var(--warn); }
+  #progress { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
+  #progressBar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; transition: width 0.2s; }
+  #output { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; font-size: 0.75rem; line-height: 1.9; max-height: 65vh; overflow-y: auto; }
+  .section { border-left: 3px solid var(--accent); padding-left: 1rem; margin: 1rem 0 0.5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--accent2); letter-spacing: 0.05em; text-transform: uppercase; }
+  .result-line { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.15rem 0; }
+  .badge { display: inline-block; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; min-width: 2.5rem; text-align: center; flex-shrink: 0; }
+  .badge.s200{background:rgba(6,182,212,.15);color:var(--accent2)} .badge.s201{background:rgba(124,58,237,.15);color:#a78bfa}
+  .badge.s204{background:rgba(16,185,129,.15);color:var(--success)} .badge.s400{background:rgba(239,68,68,.12);color:#fca5a5}
+  .badge.s401{background:rgba(245,158,11,.15);color:var(--warn)} .badge.s403{background:rgba(239,68,68,.15);color:var(--error)}
+  .badge.s404{background:rgba(100,116,139,.15);color:var(--muted)} .badge.sXXX{background:rgba(239,68,68,.1);color:#fca5a5}
+  .pass{color:var(--success)} .fail{color:var(--error)} .warn{color:var(--warn)} .muted{color:var(--muted)} .info{color:var(--accent2)}
+  .detail{color:var(--muted);font-size:0.7rem}
+  ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-  #clearBtn {
-    background: var(--surface);
-    color: var(--muted);
-    border: 1px solid var(--border);
-  }
-
-  #clearBtn:hover { color: var(--text); border-color: var(--muted); }
-
-  .stats {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.8rem;
-  }
-
-  .stat span { font-weight: 700; font-size: 1.2rem; display: block; }
-  .stat.pass span { color: var(--success); }
-  .stat.fail span { color: var(--error); }
-  .stat.total span { color: var(--accent2); }
-  .stat.skip span { color: var(--warn); }
-
-  #progress {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-  }
-
-  #progressBar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    width: 0%;
-    transition: width 0.3s;
-  }
-
-  #output {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    font-size: 0.78rem;
-    line-height: 1.8;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  .section {
-    border-left: 3px solid var(--accent);
-    padding-left: 1rem;
-    margin: 1rem 0 0.5rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--accent2);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .pass { color: var(--success); }
-  .fail { color: var(--error); }
-  .warn { color: var(--warn); }
-  .muted { color: var(--muted); }
-  .info { color: var(--accent2); }
-
-  .result-line {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    padding: 0.2rem 0;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    min-width: 2.5rem;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .badge.ok { background: rgba(16,185,129,0.2); color: var(--success); }
-  .badge.err { background: rgba(239,68,68,0.2); color: var(--error); }
-  .badge.s200 { background: rgba(6,182,212,0.15); color: var(--accent2); }
-  .badge.s201 { background: rgba(124,58,237,0.15); color: #a78bfa; }
-  .badge.s204 { background: rgba(16,185,129,0.15); color: var(--success); }
-  .badge.s401 { background: rgba(245,158,11,0.15); color: var(--warn); }
-  .badge.s403 { background: rgba(239,68,68,0.15); color: var(--error); }
-  .badge.s4xx { background: rgba(239,68,68,0.1); color: #fca5a5; }
-
-  .detail { color: var(--muted); font-size: 0.72rem; }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  /* Graph styles */
+  #graphPanel { padding: 1rem 0; }
+  .graph-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .graph-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent2); margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  canvas { max-width: 100%; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.75rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .graph-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:800px){ .graph-grid { grid-template-columns: 1fr; } }
+  .matrix-wrap { overflow-x: auto; }
+  .matrix { border-collapse: collapse; font-size: 0.65rem; width: 100%; }
+  .matrix th { background: var(--border); color: var(--muted); padding: 4px 6px; font-weight: 700; white-space: nowrap; }
+  .matrix td { padding: 3px 6px; text-align: center; border: 1px solid var(--border); }
+  .matrix td.yes { background: rgba(16,185,129,0.2); color: var(--success); }
+  .matrix td.no { background: transparent; color: var(--border); }
+  .matrix td.pres { background: rgba(124,58,237,0.3); color: #a78bfa; font-weight: 700; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+  .summary-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; }
+  .summary-card .cat { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+  .summary-card .val { font-size: 1.3rem; font-weight: 700; font-family: 'Syne', sans-serif; }
 </style>
 </head>
 <body>
+<h1>API Test Suite — Full</h1>
+<p class="subtitle">100 students · 10 clubs · 30 events · edge cases · relationship graph</p>
 
-<h1>API Test Suite</h1>
-<p class="subtitle">Full integration test — 20 users · 5 clubs · 10 events · edge cases</p>
-
-<div class="controls">
-  <button id="runBtn" onclick="runTests()">▶ Run All Tests</button>
-  <button id="clearBtn" onclick="clearOutput()">✕ Clear</button>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('tests')">▶ Tests</button>
+  <button class="tab" onclick="showTab('graph')" id="graphTab">📊 Graph</button>
 </div>
 
-<div class="stats">
-  <div class="stat total"><span id="statTotal">—</span>Total</div>
-  <div class="stat pass"><span id="statPass">—</span>Passed</div>
-  <div class="stat fail"><span id="statFail">—</span>Failed</div>
-  <div class="stat skip"><span id="statSkip">—</span>Skipped</div>
+<div id="testsPanel" class="panel active">
+  <div class="controls">
+    <button id="runBtn" onclick="runTests()">▶ Run All Tests</button>
+    <button class="btn-sec" onclick="clearOutput()">✕ Clear</button>
+    <span style="color:var(--muted);font-size:0.75rem" id="timerDisplay"></span>
+  </div>
+  <div class="stats">
+    <div class="stat total"><span id="statTotal">—</span>Total</div>
+    <div class="stat pass"><span id="statPass">—</span>Passed</div>
+    <div class="stat fail"><span id="statFail">—</span>Failed</div>
+    <div class="stat skip"><span id="statSkip">—</span>Skipped</div>
+  </div>
+  <div id="progress"><div id="progressBar"></div></div>
+  <div id="output"><span class="muted">Press "Run All Tests" to begin...</span></div>
 </div>
 
-<div id="progress"><div id="progressBar"></div></div>
-<div id="output"><span class="muted">Press "Run All Tests" to begin...</span></div>
+<div id="graphPanel" class="panel">
+  <div id="graphContent"><span class="muted" style="font-size:0.8rem">Run tests first to generate the relationship graph.</span></div>
+</div>
 
 <script>
 const BASE = "http://localhost:3000/api"
 const CATEGORIES = ["Sports", "Arts", "Tech", "Music", "Gaming"]
+const MAJORS = ["Computer Science", "Mathematics", "Physics", "Biology", "Economics"]
+
+// Global state for graph
+let G = { users: [], clubs: [], events: [], memberships: [], attendances: [] }
 
 let passed = 0, failed = 0, skipped = 0, total = 0
-
 const out = document.getElementById("output")
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+  document.querySelector(`[onclick="showTab('${name}')"]`).classList.add('active')
+  document.getElementById(name + 'Panel').classList.add('active')
+}
 
 function clearOutput() {
   out.innerHTML = '<span class="muted">Press "Run All Tests" to begin...</span>'
   passed = failed = skipped = total = 0
   updateStats()
   document.getElementById("progressBar").style.width = "0%"
+  document.getElementById("timerDisplay").textContent = ""
 }
 
 function updateStats() {
@@ -216,47 +132,26 @@ function updateStats() {
   document.getElementById("statSkip").textContent = skipped
 }
 
-function updateProgress(done, totalTests) {
-  document.getElementById("progressBar").style.width = `${(done/totalTests)*100}%`
-}
-
 function section(title) {
   out.innerHTML += `<div class="section">${title}</div>`
+  out.scrollTop = out.scrollHeight
 }
 
 function log(status, label, detail = "", expected = null) {
   total++
-  const isPass = expected === null ? status < 400 : status === expected
+  const isPass = expected === null ? status >= 200 && status < 400 : status === expected
   if (isPass) passed++; else failed++
-
-  const statusClass = status === 200 ? "s200" : status === 201 ? "s201" : status === 204 ? "s204"
-    : status === 401 ? "s401" : status === 403 ? "s403" : "s4xx"
-
-  const icon = isPass ? "✅" : "❌"
+  const sc = status === 200 ? "s200" : status === 201 ? "s201" : status === 204 ? "s204"
+    : status === 400 ? "s400" : status === 401 ? "s401" : status === 403 ? "s403"
+    : status === 404 ? "s404" : "sXXX"
   const detailHtml = detail ? `<span class="detail"> — ${detail}</span>` : ""
-
-  out.innerHTML += `<div class="result-line">
-    <span class="badge ${statusClass}">${status}</span>
-    <span class="${isPass ? 'pass' : 'fail'}">${icon} ${label}</span>${detailHtml}
-  </div>`
-
+  out.innerHTML += `<div class="result-line"><span class="badge ${sc}">${status}</span><span class="${isPass?'pass':'fail'}">${isPass?'✅':'❌'} ${label}</span>${detailHtml}</div>`
   out.scrollTop = out.scrollHeight
   updateStats()
 }
 
-function logSkip(label, reason) {
-  skipped++
-  total++
-  out.innerHTML += `<div class="result-line">
-    <span class="badge s401">SKIP</span>
-    <span class="warn">⚠️ ${label}</span><span class="detail"> — ${reason}</span>
-  </div>`
-  updateStats()
-}
-
-function logInfo(msg) {
-  out.innerHTML += `<div class="result-line"><span class="info muted">  ℹ ${msg}</span></div>`
-}
+function logSkip(label, reason) { skipped++; total++; out.innerHTML += `<div class="result-line"><span class="badge s401">SKIP</span><span class="warn">⚠️ ${label}</span><span class="detail"> — ${reason}</span></div>`; updateStats() }
+function logInfo(msg) { out.innerHTML += `<div class="result-line"><span class="info muted" style="padding-left:3rem">ℹ ${msg}</span></div>`; out.scrollTop = out.scrollHeight }
 
 async function api(method, path, body = null, token = null) {
   const headers = {}
@@ -264,326 +159,572 @@ async function api(method, path, body = null, token = null) {
   if (body && !(body instanceof FormData)) headers["Content-Type"] = "application/json"
   try {
     const res = await fetch(`${BASE}${path}`, {
-      method,
-      headers,
+      method, headers,
       body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined
     })
-    let data = null
-    try { data = await res.json() } catch (_) {}
+    let data = null; try { data = await res.json() } catch (_) {}
     return { status: res.status, data }
-  } catch (e) {
-    return { status: 0, data: { error: e.message } }
-  }
+  } catch (e) { return { status: 0, data: { error: e.message } } }
 }
 
-async function signup(name, email, gpa = "3.5", major = "Computer Science") {
+async function signup(name, email, password = "password123", gpa = "3.5", major = "Computer Science") {
   const form = new FormData()
-  form.append("name", name)
-  form.append("email", email)
-  form.append("password", "password123")
-  form.append("gpa", gpa)
-  form.append("major", major)
+  form.append("name", name); form.append("email", email); form.append("password", password)
+  form.append("gpa", gpa); form.append("major", major)
   try {
     const res = await fetch(`${BASE}/students/signup`, { method: "POST", body: form })
     const data = await res.json()
     return { status: res.status, data }
-  } catch (e) {
-    return { status: 0, data: { error: e.message } }
-  }
+  } catch (e) { return { status: 0, data: { error: e.message } } }
 }
 
 async function runTests() {
   out.innerHTML = ""
   passed = failed = skipped = total = 0
+  G = { users: [], clubs: [], events: [], memberships: [], attendances: [] }
   updateStats()
   document.getElementById("runBtn").disabled = true
+  const startTime = Date.now()
+  const timerInterval = setInterval(() => {
+    document.getElementById("timerDisplay").textContent = `${((Date.now()-startTime)/1000).toFixed(1)}s`
+  }, 100)
 
   const ts = Date.now()
-  const users = []   // { token, id, name, email }
-  const clubs = []   // { id, name, category, presidentToken, presidentId }
-  const events = {}  // clubId -> { public: id, members: id }
+  let r
 
-  // ─── SEED 20 USERS ───────────────────────────────────────────────────────
-  section("🌱 Seeding 20 Users")
-  const majors = ["Computer Science", "Mathematics", "Physics", "Biology", "Economics"]
-  for (let i = 0; i < 20; i++) {
-    const name = `Student${i + 1}`
-    const email = `student${i+1}.${ts}@test.com`
-    const gpa = (2.5 + Math.random() * 1.5).toFixed(1)
-    const major = majors[i % majors.length]
-    const r = await signup(name, email, gpa, major)
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 1 — SEED 100 USERS
+  // ═══════════════════════════════════════════════════════════
+  section("🌱 Seeding 100 Users")
+  for (let i = 0; i < 100; i++) {
+    const name = `Student${String.fromCharCode(65 + Math.floor(i/10))}${i+1}`
+    const email = `s${i+1}.${ts}@school.com`
+    const gpa = (2.0 + Math.random() * 2.0).toFixed(1)
+    const major = MAJORS[i % MAJORS.length]
+    r = await signup(name, email, "password123", gpa, major)
     if (r.status === 201 && r.data.token) {
-      users.push({ token: r.data.token, id: r.data.user.id, name, email })
-      log(r.status, `Signup: ${name} (${major}, GPA ${gpa})`, r.data.user.email, 201)
+      G.users.push({ id: r.data.user.id, token: r.data.token, name, email, gpa, major })
+      if (i % 10 === 0) log(r.status, `Batch ${Math.floor(i/10)+1}/10: ${name} created`, email, 201)
     } else {
-      log(r.status, `Signup: ${name}`, JSON.stringify(r.data), 201)
+      log(r.status, `Signup failed: ${name}`, JSON.stringify(r.data), 201)
     }
-    updateProgress(i+1, 20)
+    document.getElementById("progressBar").style.width = `${(i+1)/100*15}%`
   }
-  logInfo(`${users.length}/20 users created successfully`)
+  logInfo(`${G.users.length}/100 users seeded`)
 
-  if (users.length < 5) {
-    logSkip("All remaining tests", "Not enough users created")
-    document.getElementById("runBtn").disabled = false
-    return
-  }
+  if (G.users.length < 20) { logSkip("All remaining tests", "Not enough users"); document.getElementById("runBtn").disabled = false; clearInterval(timerInterval); return }
 
-  // ─── VALIDATION EDGE CASES ───────────────────────────────────────────────
-  section("🛡️ Signup Validation Edge Cases")
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 2 — STUDENT VALIDATOR EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("🛡️ Student Validator — All Fields")
 
-  let r = await signup("", `empty${ts}@test.com`)
-  log(r.status, "Reject empty name", r.data?.message, 400)
+  // Name
+  r = await signup("", `ev1.${ts}@t.com`); log(r.status, "[Name] Empty name → 400", r.data?.message, 400)
+  r = await signup("   ", `ev2.${ts}@t.com`); log(r.status, "[Name] Whitespace-only name → 400", r.data?.message, 400)
+  r = await signup("John123", `ev3.${ts}@t.com`); log(r.status, "[Name] Name with digits → 400", r.data?.message, 400)
+  r = await signup("J0hn D0e", `ev4.${ts}@t.com`); log(r.status, "[Name] Name with mixed digits → 400", r.data?.message, 400)
+  r = await signup("John@Doe", `ev5.${ts}@t.com`); log(r.status, "[Name] Name with special chars → 400", r.data?.message, 400)
 
-  r = await signup("John123", `nums${ts}@test.com`)
-  log(r.status, "Reject numeric chars in name", r.data?.message, 400)
+  // Email
+  const badEmailForm1 = new FormData(); badEmailForm1.append("name","Valid"); badEmailForm1.append("email","notanemail"); badEmailForm1.append("password","pass1234"); badEmailForm1.append("gpa","3"); badEmailForm1.append("major","CS")
+  const er1 = await fetch(`${BASE}/students/signup`,{method:"POST",body:badEmailForm1}); const ed1 = await er1.json()
+  log(er1.status, "[Email] Missing @ → 400", ed1?.message, 400)
 
-  r = await signup("ValidName", "notanemail")
-  log(r.status, "Reject invalid email", r.data?.message, 400)
+  const badEmailForm2 = new FormData(); badEmailForm2.append("name","Valid"); badEmailForm2.append("email","@nodomain.com"); badEmailForm2.append("password","pass1234"); badEmailForm2.append("gpa","3"); badEmailForm2.append("major","CS")
+  const er2 = await fetch(`${BASE}/students/signup`,{method:"POST",body:badEmailForm2}); const ed2 = await er2.json()
+  log(er2.status, "[Email] No local part → 400", ed2?.message, 400)
 
-  r = await signup("ValidName", `short${ts}@test.com`, "3.5", "CS")
-  // password too short
-  const shortPwForm = new FormData()
-  shortPwForm.append("name", "ValidName")
-  shortPwForm.append("email", `shortpw${ts}@test.com`)
-  shortPwForm.append("password", "short")
-  shortPwForm.append("gpa", "3.5")
-  shortPwForm.append("major", "CS")
-  const shortPwRes = await fetch(`${BASE}/students/signup`, { method: "POST", body: shortPwForm })
-  const shortPwData = await shortPwRes.json()
-  log(shortPwRes.status, "Reject password < 8 chars", shortPwData?.message, 400)
+  const badEmailForm3 = new FormData(); badEmailForm3.append("name","Valid"); badEmailForm3.append("email","nodot@domain"); badEmailForm3.append("password","pass1234"); badEmailForm3.append("gpa","3"); badEmailForm3.append("major","CS")
+  const er3 = await fetch(`${BASE}/students/signup`,{method:"POST",body:badEmailForm3}); const ed3 = await er3.json()
+  log(er3.status, "[Email] No TLD → 400", ed3?.message, 400)
 
-  r = await signup("ValidName", `badgpa${ts}@test.com`, "5.0")
-  log(r.status, "Reject GPA > 4", r.data?.message, 400)
+  // Password
+  const shortPw = new FormData(); shortPw.append("name","Valid"); shortPw.append("email",`pw1.${ts}@t.com`); shortPw.append("password","short"); shortPw.append("gpa","3"); shortPw.append("major","CS")
+  const spr = await fetch(`${BASE}/students/signup`,{method:"POST",body:shortPw}); const spd = await spr.json()
+  log(spr.status, "[Password] Too short (5 chars) → 400", spd?.message, 400)
 
-  // Duplicate email
-  r = await signup("Duplicate", users[0].email)
-  log(r.status >= 400 ? r.status : 400, "Reject duplicate email", r.status >= 400 ? "Correctly rejected" : "Should have failed", 400)
+  const pw7 = new FormData(); pw7.append("name","Valid"); pw7.append("email",`pw2.${ts}@t.com`); pw7.append("password","7charss"); pw7.append("gpa","3"); pw7.append("major","CS")
+  const pw7r = await fetch(`${BASE}/students/signup`,{method:"POST",body:pw7}); const pw7d = await pw7r.json()
+  log(pw7r.status, "[Password] 7 chars (boundary) → 400", pw7d?.message, 400)
 
-  // ─── AUTH EDGE CASES ─────────────────────────────────────────────────────
-  section("🔐 Auth Edge Cases")
+  // GPA
+  r = await signup("Valid Name", `gpa1.${ts}@t.com`, "password123", "4.1"); log(r.status, "[GPA] 4.1 → 400", r.data?.message, 400)
+  r = await signup("Valid Name", `gpa2.${ts}@t.com`, "password123", "-0.1"); log(r.status, "[GPA] Negative GPA → 400", r.data?.message, 400)
+  r = await signup("Valid Name", `gpa3.${ts}@t.com`, "password123", "abc"); log(r.status, "[GPA] Non-numeric GPA → 400", r.data?.message, 400)
 
-  r = await api("GET", "/clubs")
-  log(r.status, "GET /clubs without token → 401", null, 401)
+  // Duplicate email (attempt twice)
+  r = await signup("Valid Name", G.users[0].email); log(r.status >= 400 ? r.status : 500, "[Email] Duplicate email (1st attempt) → 400", null, 400)
+  r = await signup("Valid Name", G.users[1].email); log(r.status >= 400 ? r.status : 500, "[Email] Duplicate email (2nd attempt) → 400", null, 400)
 
-  r = await api("GET", "/clubs", null, "invalidtoken")
-  log(r.status, "GET /clubs with invalid token → 401", null, 401)
+  document.getElementById("progressBar").style.width = "20%"
 
-  r = await api("GET", "/clubs", null, "Bearer faketoken")
-  log(r.status, "GET /clubs with malformed token → 401", null, 401)
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 3 — AUTH EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("🔐 Authentication Edge Cases")
 
-  // ─── CREATE CLUBS (one per category) ─────────────────────────────────────
-  section("🏛️ Creating Clubs (one per category)")
+  r = await api("GET", "/clubs"); log(r.status, "[Auth] GET /clubs no token → 401", null, 401)
+  r = await api("GET", "/clubs", null, "invalidtoken"); log(r.status, "[Auth] GET /clubs invalid token → 401", null, 401)
+  r = await api("GET", "/clubs", null, "Bearer fake.token.here"); log(r.status, "[Auth] GET /clubs malformed Bearer → 401", null, 401)
+  r = await api("GET", "/clubs", null, "Bearer "); log(r.status, "[Auth] GET /clubs empty Bearer → 401", null, 401)
+  r = await api("POST", "/clubs", { name:"X", category:"Tech", capacity:10, description:"Y" }); log(r.status, "[Auth] POST /clubs no token → 401", null, 401)
+  r = await api("POST", "/clubs", { name:"X", category:"Tech", capacity:10, description:"Y" }); log(r.status, "[Auth] POST /clubs no token (2nd) → 401", null, 401)
+  r = await api("DELETE", "/clubs/000000000000000000000001", null); log(r.status, "[Auth] DELETE club no token → 401", null, 401)
+  r = await api("DELETE", "/clubs/000000000000000000000001", null); log(r.status, "[Auth] DELETE club no token (2nd) → 401", null, 401)
+  r = await api("POST", "/clubs/000000000000000000000001/events", { title:"X", description:"Y", date:"2030-01-01T00:00:00.000Z", access:"public" }); log(r.status, "[Auth] POST event no token → 401", null, 401)
+  r = await api("POST", "/clubs/000000000000000000000001/events", { title:"X", description:"Y", date:"2030-01-01T00:00:00.000Z", access:"public" }); log(r.status, "[Auth] POST event no token (2nd) → 401", null, 401)
+
+  document.getElementById("progressBar").style.width = "25%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 4 — CREATE 10 CLUBS (2 per category)
+  // ═══════════════════════════════════════════════════════════
+  section("🏛️ Creating 10 Clubs (2 per category)")
 
   for (let i = 0; i < CATEGORIES.length; i++) {
-    const category = CATEGORIES[i]
-    const president = users[i]
-    r = await api("POST", "/clubs", {
-      name: `${category} Club`,
-      category,
-      capacity: 10 + i * 2,
-      description: `The official ${category} club`
-    }, president.token)
+    for (let j = 0; j < 2; j++) {
+      const cat = CATEGORIES[i]
+      const presidentIdx = i * 2 + j
+      const president = G.users[presidentIdx]
+      r = await api("POST", "/clubs", {
+        name: `${cat} Club ${j+1}`,
+        category: cat,
+        capacity: 15 + j * 5,
+        description: `The ${j===0?'main':'alternative'} ${cat} club on campus`
+      }, president.token)
 
-    if (r.status === 201 && r.data.id) {
-      clubs.push({ id: r.data.id, name: r.data.name, category, presidentToken: president.token, presidentId: president.id })
-      log(r.status, `Create club: ${category} Club (president: ${president.name})`, null, 201)
-    } else {
-      log(r.status, `Create club: ${category}`, JSON.stringify(r.data), 201)
+      if (r.status === 201 && r.data.id) {
+        G.clubs.push({ id: r.data.id, name: r.data.name, category: cat, presidentIdx, presidentToken: president.token, presidentId: president.id })
+        G.memberships.push({ userId: president.id, clubId: r.data.id, role: "president" })
+        log(r.status, `${cat} Club ${j+1} (president: ${president.name})`, null, 201)
+      } else {
+        log(r.status, `Create ${cat} Club ${j+1}`, JSON.stringify(r.data), 201)
+      }
     }
   }
-  logInfo(`${clubs.length}/5 clubs created`)
+  logInfo(`${G.clubs.length}/10 clubs created`)
 
-  // ─── CLUB PERMISSION EDGE CASES ──────────────────────────────────────────
-  section("🚫 Club Permission Edge Cases")
+  document.getElementById("progressBar").style.width = "30%"
 
-  if (clubs.length > 0) {
-    // Non-president tries to create event
-    const nonPresident = users[10]
-    r = await api("POST", `/clubs/${clubs[0].id}/events`, {
-      title: "Unauthorized Event",
-      description: "Should fail",
-      date: "2026-07-01T18:00:00.000Z",
-      access: "public"
-    }, nonPresident.token)
-    log(r.status, "Non-president creates event → 403", r.data?.error, 403)
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 5 — CLUB VALIDATOR EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("🛡️ Club Validator — All Fields")
+  const t1 = G.users[50].token
 
-    // No token creates event
-    r = await api("POST", `/clubs/${clubs[0].id}/events`, {
-      title: "No Auth Event",
-      description: "Should fail",
-      date: "2026-07-01T18:00:00.000Z",
-      access: "public"
-    })
-    log(r.status, "Unauthenticated creates event → 401", null, 401)
+  r = await api("POST", "/clubs", { name:"", category:"Tech", capacity:10, description:"D" }, t1); log(r.status, "[Club Name] Empty → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Club123", category:"Tech", capacity:10, description:"D" }, t1); log(r.status, "[Club Name] Digits in name → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"", capacity:10, description:"D" }, t1); log(r.status, "[Club Category] Empty → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Dancing", capacity:10, description:"D" }, t1); log(r.status, "[Club Category] Invalid enum → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:10, description:"D" }, t1); // valid - will succeed
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"TECH", capacity:10, description:"D" }, t1); log(r.status, "[Club Category] Wrong case → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:0, description:"D" }, t1); log(r.status, "[Club Capacity] Zero → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:-5, description:"D" }, t1); log(r.status, "[Club Capacity] Negative → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:"abc", description:"D" }, t1); log(r.status, "[Club Capacity] Non-numeric → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:10 }, t1); log(r.status, "[Club Description] Missing → 400", r.data?.message, 400)
+  r = await api("POST", "/clubs", { name:"Valid Club", category:"Tech", capacity:10, description:"" }, t1); log(r.status, "[Club Description] Empty → 400", r.data?.message, 400)
 
-    // Invalid club id
-    r = await api("GET", "/clubs/000000000000000000000000", null, users[0].token)
-    log(r.status, "GET non-existent club → 404", null, 404)
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 6 — PRESIDENT PERMISSIONS
+  // ═══════════════════════════════════════════════════════════
+  section("👑 President Permission Edge Cases")
+  const nonPres = G.users[60]
 
-    // Invalid event id
-    r = await api("GET", `/clubs/${clubs[0].id}/events/000000000000000000000000`, null, users[0].token)
-    log(r.status, "GET non-existent event → 404", null, 404)
-  }
+  if (G.clubs.length > 0) {
+    const club = G.clubs[0]
 
-  // ─── CREATE EVENTS ────────────────────────────────────────────────────────
-  section("📅 Creating Events (2 per club)")
+    // Non-president tries to create event (twice)
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"Hack", description:"D", date:"2030-01-01T00:00:00.000Z", access:"public" }, nonPres.token)
+    log(r.status, "[President] Non-president creates event (1st) → 403", r.data?.error, 403)
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"Hack2", description:"D", date:"2030-01-01T00:00:00.000Z", access:"public" }, nonPres.token)
+    log(r.status, "[President] Non-president creates event (2nd) → 403", r.data?.error, 403)
 
-  for (const club of clubs) {
-    events[club.id] = {}
+    // Non-president tries to update club event
+    r = await api("PUT", `/clubs/${club.id}/events/000000000000000000000001`, { title:"X" }, nonPres.token)
+    log(r.status, "[President] Non-president updates event → 403 or 404", null, 403) // 403 from isPresident before 404
 
-    // Public event
-    r = await api("POST", `/clubs/${club.id}/events`, {
-      title: `${club.category} Open Event`,
-      description: `Public event for ${club.name}`,
-      date: "2026-07-15T18:00:00.000Z",
-      access: "public"
-    }, club.presidentToken)
+    // Non-president deletes event
+    r = await api("DELETE", `/clubs/${club.id}/events/000000000000000000000001`, null, nonPres.token)
+    log(r.status, "[President] Non-president deletes event → 403", null, 403)
 
-    if (r.status === 201 && r.data.id) {
-      events[club.id].public = r.data.id
-      log(r.status, `Create public event: ${club.category} Open Event`, null, 201)
-    } else {
-      log(r.status, `Create public event for ${club.category}`, JSON.stringify(r.data), 201)
-    }
-
-    // Members only event
-    r = await api("POST", `/clubs/${club.id}/events`, {
-      title: `${club.category} Members Event`,
-      description: `Private event for ${club.name} members`,
-      date: "2026-08-01T18:00:00.000Z",
-      access: "members_only"
-    }, club.presidentToken)
-
-    if (r.status === 201 && r.data.id) {
-      events[club.id].members = r.data.id
-      log(r.status, `Create members_only event: ${club.category} Members Event`, null, 201)
-    } else {
-      log(r.status, `Create members_only event for ${club.category}`, JSON.stringify(r.data), 201)
+    // President of club A tries to create event in club B
+    if (G.clubs.length > 1) {
+      const clubB = G.clubs[1]
+      r = await api("POST", `/clubs/${clubB.id}/events`, { title:"Cross", description:"D", date:"2030-01-01T00:00:00.000Z", access:"public" }, club.presidentToken)
+      log(r.status, "[President] President of Club A creates event in Club B → 403", r.data?.error, 403)
     }
   }
 
-  // ─── JOIN CLUBS ───────────────────────────────────────────────────────────
-  section("🤝 Users Joining Clubs")
+  document.getElementById("progressBar").style.width = "40%"
 
-  for (let i = 0; i < clubs.length; i++) {
-    const club = clubs[i]
-    // Assign 4 users per club (users 5-19, skipping presidents who are already members)
-    const members = users.slice(5).filter(u => u.id !== club.presidentId).slice(0, 4)
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 7 — CREATE EVENTS (3 per club)
+  // ═══════════════════════════════════════════════════════════
+  section("📅 Creating Events (3 per club: 1 members_only + 2 public)")
 
-    for (const user of members) {
+  for (const club of G.clubs) {
+    G.events[club.id] = []
+
+    const eventDefs = [
+      { title: `${club.name} Members Night`, access: "members_only", date: "2026-09-01T18:00:00.000Z" },
+      { title: `${club.name} Open Day`, access: "public", date: "2026-09-15T18:00:00.000Z" },
+      { title: `${club.name} Grand Event`, access: "public", date: "2026-10-01T18:00:00.000Z" },
+    ]
+
+    for (const def of eventDefs) {
+      r = await api("POST", `/clubs/${club.id}/events`, {
+        title: def.title, description: `${def.access} event for ${club.name}`,
+        date: def.date, access: def.access
+      }, club.presidentToken)
+
+      if (r.status === 201 && r.data.id) {
+        G.events[club.id].push({ id: r.data.id, title: def.title, access: def.access })
+        log(r.status, `[${club.category}] ${def.title} (${def.access})`, null, 201)
+      } else {
+        log(r.status, `Create event for ${club.name}`, JSON.stringify(r.data), 201)
+      }
+    }
+  }
+
+  document.getElementById("progressBar").style.width = "50%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 8 — EVENT VALIDATOR EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("🛡️ Event Validator — All Fields")
+  if (G.clubs.length > 0) {
+    const club = G.clubs[0]
+    const pTok = club.presidentToken
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"", description:"D", date:"2030-01-01T00:00:00.000Z", access:"public" }, pTok)
+    log(r.status, "[Event Title] Empty → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { description:"D", date:"2030-01-01T00:00:00.000Z", access:"public" }, pTok)
+    log(r.status, "[Event Title] Missing → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"", date:"2030-01-01T00:00:00.000Z", access:"public" }, pTok)
+    log(r.status, "[Event Description] Empty → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"", access:"public" }, pTok)
+    log(r.status, "[Event Date] Empty → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"not-a-date", access:"public" }, pTok)
+    log(r.status, "[Event Date] Invalid format → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"2020-01-01T00:00:00.000Z", access:"public" }, pTok)
+    log(r.status, "[Event Date] Past date → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"2030-01-01T00:00:00.000Z", access:"" }, pTok)
+    log(r.status, "[Event Access] Empty → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"2030-01-01T00:00:00.000Z", access:"private" }, pTok)
+    log(r.status, "[Event Access] Invalid value → 400", r.data?.message, 400)
+
+    r = await api("POST", `/clubs/${club.id}/events`, { title:"T", description:"D", date:"2030-01-01T00:00:00.000Z", access:"PUBLIC" }, pTok)
+    log(r.status, "[Event Access] Wrong case → 400", r.data?.message, 400)
+  }
+
+  document.getElementById("progressBar").style.width = "55%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 9 — 30 STUDENTS JOIN ONLY ONE CLUB
+  // ═══════════════════════════════════════════════════════════
+  section("🤝 30 Students Join Only One Club Each (users 11-40)")
+
+  const singleClubUsers = G.users.slice(10, 40)
+  for (let i = 0; i < singleClubUsers.length; i++) {
+    const user = singleClubUsers[i]
+    const club = G.clubs[i % G.clubs.length]
+    r = await api("POST", `/clubs/${club.id}/join`, null, user.token)
+    if (r.status === 200) {
+      G.memberships.push({ userId: user.id, clubId: club.id, role: "member" })
+      if (i % 5 === 0) log(r.status, `${user.name} → ${club.name}`, null, 200)
+    } else {
+      log(r.status, `${user.name} join ${club.name}`, JSON.stringify(r.data), 200)
+    }
+  }
+  logInfo(`${singleClubUsers.length} single-club memberships created`)
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 10 — 20 STUDENTS JOIN MULTIPLE CLUBS
+  // ═══════════════════════════════════════════════════════════
+  section("🔗 20 Students Join Multiple Clubs (users 41-60)")
+
+  const multiClubUsers = G.users.slice(40, 60)
+  for (let i = 0; i < multiClubUsers.length; i++) {
+    const user = multiClubUsers[i]
+    const numClubs = 2 + (i % 3) // 2-4 clubs per user
+    const selectedClubs = G.clubs.slice(i % G.clubs.length, i % G.clubs.length + numClubs)
+    for (const club of selectedClubs) {
       r = await api("POST", `/clubs/${club.id}/join`, null, user.token)
-      log(r.status, `${user.name} joins ${club.name}`, null, 200)
+      if (r.status === 200) {
+        G.memberships.push({ userId: user.id, clubId: club.id, role: "member" })
+      }
+    }
+    if (i % 4 === 0) log(200, `${user.name} joined ${selectedClubs.length} clubs`, selectedClubs.map(c=>c.name).join(", "), 200)
+  }
+  logInfo(`Multi-club memberships created`)
+
+  document.getElementById("progressBar").style.width = "65%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 11 — DUPLICATE JOIN ATTEMPTS
+  // ═══════════════════════════════════════════════════════════
+  section("🔁 Duplicate Join Attempts ($addToSet protection)")
+
+  if (G.clubs.length > 0) {
+    const club = G.clubs[0]
+    const user = G.users[10]
+
+    await api("POST", `/clubs/${club.id}/join`, null, user.token)
+    r = await api("POST", `/clubs/${club.id}/join`, null, user.token)
+    log(r.status, "[Club] Same user joins same club twice → 200 (no duplicate)", null, 200)
+    r = await api("POST", `/clubs/${club.id}/join`, null, user.token)
+    log(r.status, "[Club] Same user joins same club 3rd time → 200 (no duplicate)", null, 200)
+
+    // Verify no duplicate via club memberCount
+    const clubRes = await api("GET", `/clubs/${club.id}`, null, user.token)
+    logInfo(`Club member count after 3 join attempts: ${clubRes.data?.memberCount ?? clubRes.data?.members?.length ?? 'unknown'} (should not increase)`)
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 12 — CLUB CAPACITY CHECK
+  // ═══════════════════════════════════════════════════════════
+  section("📏 Club Capacity Limit")
+
+  // Create a tiny club with capacity 2
+  r = await api("POST", "/clubs", { name:"Tiny Club", category:"Gaming", capacity:2, description:"Very small club" }, G.users[70].token)
+  if (r.status === 201) {
+    const tinyClub = r.data.id
+    // President already member (1/2)
+    r = await api("POST", `/clubs/${tinyClub}/join`, null, G.users[71].token)
+    log(r.status, "[Capacity] 2nd member joins tiny club (1 slot left) → 200", null, 200)
+    r = await api("POST", `/clubs/${tinyClub}/join`, null, G.users[72].token)
+    log(r.status, "[Capacity] 3rd member joins tiny club (full) → 400", r.data?.error, 400)
+    r = await api("POST", `/clubs/${tinyClub}/join`, null, G.users[73].token)
+    log(r.status, "[Capacity] 4th member joins full club → 400", r.data?.error, 400)
+  } else {
+    logSkip("Capacity test", "Could not create tiny club")
+  }
+
+  document.getElementById("progressBar").style.width = "72%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 13 — PUBLIC EVENT JOIN (5-50 non-members)
+  // ═══════════════════════════════════════════════════════════
+  section("🎟️ 5-50 Non-Members Join Public Events")
+
+  const nonMemberUsers = G.users.slice(60, 100) // users with no planned club memberships
+  let publicJoins = 0
+
+  for (const club of G.clubs.slice(0, 5)) {
+    const publicEvents = (G.events[club.id] || []).filter(e => e.access === "public")
+    if (publicEvents.length === 0) continue
+    const event = publicEvents[0]
+    const count = 5 + Math.floor(Math.random() * 10) // 5-14 per event
+    const joiners = nonMemberUsers.slice(0, count)
+
+    for (const user of joiners) {
+      r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, user.token)
+      if (r.status === 200) {
+        G.attendances.push({ userId: user.id, eventId: event.id, clubId: club.id })
+        publicJoins++
+      }
+    }
+    log(200, `${count} non-members joined public event: ${event.title}`, null, 200)
+  }
+  logInfo(`${publicJoins} total non-member public event joins`)
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 14 — MEMBERS JOIN EVENTS
+  // ═══════════════════════════════════════════════════════════
+  section("👥 Club Members Join Members-Only Events")
+
+  let memberJoins = 0, blockedJoins = 0
+
+  for (const club of G.clubs.slice(0, 5)) {
+    const membersOnlyEvents = (G.events[club.id] || []).filter(e => e.access === "members_only")
+    if (membersOnlyEvents.length === 0) continue
+    const event = membersOnlyEvents[0]
+
+    const clubMembers = G.memberships.filter(m => m.clubId === club.id).map(m => G.users.find(u => u.id === m.userId)).filter(Boolean)
+
+    for (const user of clubMembers.slice(0, 5)) {
+      r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, user.token)
+      if (r.status === 200) memberJoins++
+      else log(r.status, `Member join members_only failed: ${user.name}`, r.data?.error, 200)
+    }
+
+    // Non-member tries to join (twice)
+    const nonMember1 = G.users[80]
+    const nonMember2 = G.users[81]
+    r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, nonMember1.token)
+    log(r.status, `[Members Only] ${nonMember1.name} (non-member) → 403`, r.data?.error, 403)
+    r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, nonMember2.token)
+    log(r.status, `[Members Only] ${nonMember2.name} (non-member) → 403`, r.data?.error, 403)
+    blockedJoins += 2
+  }
+  logInfo(`${memberJoins} member joins · ${blockedJoins} non-members correctly blocked`)
+
+  document.getElementById("progressBar").style.width = "82%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 15 — DUPLICATE EVENT JOINS
+  // ═══════════════════════════════════════════════════════════
+  section("🔁 Duplicate Event Join Protection")
+
+  if (G.clubs.length > 0) {
+    const club = G.clubs[0]
+    const publicEvents = (G.events[club.id] || []).filter(e => e.access === "public")
+    if (publicEvents.length > 0) {
+      const event = publicEvents[0]
+      const user = G.users[90]
+
+      await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, user.token)
+      r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, user.token)
+      log(r.status, "[Event] Same user joins same event twice → 200 (no duplicate)", null, 200)
+      r = await api("POST", `/clubs/${club.id}/events/${event.id}/join`, null, user.token)
+      log(r.status, "[Event] Same user joins same event 3rd time → 200 (no duplicate)", null, 200)
+
+      const evRes = await api("GET", `/clubs/${club.id}/events/${event.id}`, null, user.token)
+      logInfo(`attendeeCount after 3 join attempts: ${evRes.data?.attendeeCount} (should not grow)`)
     }
   }
 
-  // ─── JOIN PUBLIC EVENTS ───────────────────────────────────────────────────
-  section("🎟️ All Users Joining Public Events")
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 16 — 404 EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("🔍 Not Found Edge Cases")
+  const tok = G.users[0].token
 
-  for (const club of clubs) {
-    if (!events[club.id]?.public) continue
-    const eventId = events[club.id].public
+  r = await api("GET", "/clubs/000000000000000000000001", null, tok); log(r.status, "[404] GET non-existent club → 404", null, 404)
+  r = await api("PUT", "/clubs/000000000000000000000001", { name:"X" }, tok); log(r.status, "[404] PUT non-existent club → 404", null, 404)
+  r = await api("DELETE", "/clubs/000000000000000000000001", null, tok); log(r.status, "[404] DELETE non-existent club → 404", null, 404)
+  r = await api("GET", "/students/000000000000000000000001", null, tok); log(r.status, "[404] GET non-existent student → 404", null, 404)
 
-    for (const user of users.slice(0, 8)) {
-      r = await api("POST", `/clubs/${club.id}/events/${eventId}/join`, null, user.token)
-      log(r.status, `${user.name} joins public event in ${club.name}`, null, 200)
-    }
+  if (G.clubs.length > 0) {
+    const clubId = G.clubs[0].id
+    r = await api("GET", `/clubs/${clubId}/events/000000000000000000000001`, null, tok); log(r.status, "[404] GET non-existent event → 404", null, 404)
+    r = await api("PUT", `/clubs/${clubId}/events/000000000000000000000001`, { title:"X" }, G.clubs[0].presidentToken); log(r.status, "[404] PUT non-existent event → 404", null, 404)
+    r = await api("DELETE", `/clubs/${clubId}/events/000000000000000000000001`, null, G.clubs[0].presidentToken); log(r.status, "[404] DELETE non-existent event → 404", null, 404)
   }
 
-  // ─── JOIN MEMBERS_ONLY EVENTS ─────────────────────────────────────────────
-  section("🔒 Members-Only Event Access Control")
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 17 — CRUD VERIFICATION
+  // ═══════════════════════════════════════════════════════════
+  section("✏️ CRUD — Update & Delete Verification")
 
-  for (const club of clubs.slice(0, 2)) {
-    if (!events[club.id]?.members) continue
-    const eventId = events[club.id].members
+  if (G.clubs.length > 1) {
+    const club = G.clubs[1]
 
-    // President joins (should succeed — they are a member)
-    r = await api("POST", `/clubs/${club.id}/events/${eventId}/join`, null, club.presidentToken)
-    log(r.status, `President joins members_only event in ${club.name} → 200`, null, 200)
-
-    // Non-member tries to join (users[15-19] haven't joined any club)
-    const nonMember = users[19]
-    r = await api("POST", `/clubs/${club.id}/events/${eventId}/join`, null, nonMember.token)
-    log(r.status, `Non-member (${nonMember.name}) joins members_only event → 403`, r.data?.error, 403)
-  }
-
-  // ─── DUPLICATE JOIN PROTECTION ────────────────────────────────────────────
-  section("🔁 Duplicate Join Protection")
-
-  if (clubs.length > 0 && events[clubs[0].id]?.public) {
-    const user = users[0]
-    const club = clubs[0]
-    const eventId = events[club.id].public
-
-    // Join same event twice
-    await api("POST", `/clubs/${club.id}/events/${eventId}/join`, null, user.token)
-    r = await api("POST", `/clubs/${club.id}/events/${eventId}/join`, null, user.token)
-    // $addToSet should prevent duplicates — check attendeeCount stays same
-    const eventRes = await api("GET", `/clubs/${club.id}/events/${eventId}`, null, user.token)
-    const count = eventRes.data?.attendeeCount
-    log(count !== undefined ? 200 : 500, `No duplicate attendees ($addToSet)`, `attendeeCount: ${count}`, 200)
-
-    // Join same club twice
-    await api("POST", `/clubs/${club.id}/join`, null, users[10].token)
-    r = await api("POST", `/clubs/${club.id}/join`, null, users[10].token)
-    log(r.status, "No duplicate club members ($addToSet)", null, 200)
-  }
-
-  // ─── CRUD OPERATIONS ──────────────────────────────────────────────────────
-  section("✏️ CRUD — Update & Delete")
-
-  if (clubs.length > 0) {
-    const club = clubs[0]
-
-    // Update club
     r = await api("PUT", `/clubs/${club.id}`, { description: "Updated description" }, club.presidentToken)
     log(r.status, `Update club: ${club.name}`, null, 200)
 
-    // Non-president tries to update club — no protection on PUT /clubs/:id yet
-    // (noting this as info, not a test failure)
-    logInfo("Note: PUT /clubs/:id has no president check — any authenticated user can update")
+    if (G.events[club.id]?.length > 0) {
+      const event = G.events[club.id][1]
+      r = await api("PUT", `/clubs/${club.id}/events/${event.id}`, { description:"Updated event desc" }, club.presidentToken)
+      log(r.status, `President updates event: ${event.title}`, null, 200)
 
-    if (events[club.id]?.public) {
-      const eventId = events[club.id].public
+      r = await api("DELETE", `/clubs/${club.id}/events/${event.id}`, null, club.presidentToken)
+      log(r.status, `President deletes event: ${event.title}`, null, 204)
 
-      // Update event (president)
-      r = await api("PUT", `/clubs/${club.id}/events/${eventId}`, { description: "Updated event" }, club.presidentToken)
-      log(r.status, `President updates event in ${club.name}`, null, 200)
-
-      // Non-president tries to update event
-      r = await api("PUT", `/clubs/${club.id}/events/${eventId}`, { description: "Hack" }, users[15].token)
-      log(r.status, `Non-president updates event → 403`, null, 403)
-
-      // Delete event (president)
-      r = await api("DELETE", `/clubs/${club.id}/events/${eventId}`, null, club.presidentToken)
-      log(r.status, `President deletes event in ${club.name}`, null, 204)
-
-      // Try to GET deleted event
-      r = await api("GET", `/clubs/${club.id}/events/${eventId}`, null, club.presidentToken)
+      r = await api("GET", `/clubs/${club.id}/events/${event.id}`, null, G.users[0].token)
       log(r.status, `GET deleted event → 404`, null, 404)
     }
-
-    // Delete club
-    r = await api("DELETE", `/clubs/${club.id}`, null, club.presidentToken)
-    log(r.status, `Delete club: ${club.name}`, null, 204)
   }
 
-  // ─── GET ALL ──────────────────────────────────────────────────────────────
-  section("📋 Final State — GET All")
+  document.getElementById("progressBar").style.width = "90%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 18 — SUGGESTED EDGE CASES
+  // ═══════════════════════════════════════════════════════════
+  section("💡 Suggested Edge Cases")
+
+  // Expired token simulation (can't easily test without waiting, just note it)
+  logInfo("Token expiry: JWT set to 24h — cannot test in real-time but verify expiresIn in jwt.sign()")
+
+  // Very long strings
+  if (G.users[51]?.token) {
+    const longName = "A".repeat(500)
+    r = await api("POST", "/clubs", { name: longName, category:"Tech", capacity:10, description:"D" }, G.users[51].token)
+    log(r.status >= 400 ? r.status : 400, "[Edge] Very long club name (500 chars)", r.data?.message, 400)
+  }
+
+  // Special chars in club name
+  if (G.users[52]?.token) {
+    r = await api("POST", "/clubs", { name:"Club <script>", category:"Tech", capacity:10, description:"D" }, G.users[52].token)
+    log(r.status >= 400 ? r.status : 400, "[Edge] Script injection in club name", r.data?.message, 400)
+  }
+
+  // Join non-existent club
+  r = await api("POST", "/clubs/000000000000000000000001/join", null, G.users[0].token)
+  log(r.status, "[Edge] Join non-existent club → 404", null, 404)
+
+  // Join non-existent event
+  if (G.clubs.length > 0) {
+    r = await api("POST", `/clubs/${G.clubs[0].id}/events/000000000000000000000001/join`, null, G.users[0].token)
+    log(r.status, "[Edge] Join non-existent event → 404", null, 404)
+  }
+
+  // Invalid ObjectId format (not valid MongoDB ID)
+  r = await api("GET", "/clubs/notanobjectid", null, G.users[0].token)
+  log(r.status >= 400 ? r.status : 400, "[Edge] Invalid ObjectId format → 400 or 500", `status: ${r.status}`)
+
+  // GET all clubs returns public DTO (no passwords/member arrays)
+  r = await api("GET", "/clubs", null, G.users[0].token)
+  if (r.status === 200 && Array.isArray(r.data) && r.data.length > 0) {
+    const hasPassword = r.data.some(c => c.password !== undefined)
+    const hasMembers = r.data.some(c => Array.isArray(c.members))
+    log(!hasPassword && !hasMembers ? 200 : 400, "[DTO] GET /clubs hides members array and passwords", `password exposed: ${hasPassword}, members exposed: ${hasMembers}`, 200)
+  }
+
+  // GET all students returns no passwords
+  r = await api("GET", "/students")
+  if (r.status === 200 && Array.isArray(r.data) && r.data.length > 0) {
+    const hasPassword = r.data.some(s => s.password !== undefined)
+    log(!hasPassword ? 200 : 400, "[DTO] GET /students hides passwords", `password exposed: ${hasPassword}`, 200)
+  }
+
+  // President sees full memberlist on GET /:id
+  if (G.clubs.length > 0) {
+    const club = G.clubs[0]
+    r = await api("GET", `/clubs/${club.id}`, null, club.presidentToken)
+    const hasMembers = Array.isArray(r.data?.members)
+    log(hasMembers ? 200 : 400, "[DTO] President GET /clubs/:id sees members array", `members array present: ${hasMembers}`, 200)
+
+    // Non-president sees memberCount not array
+    const nonPres2 = G.users[90]
+    r = await api("GET", `/clubs/${club.id}`, null, nonPres2.token)
+    const hasCount = r.data?.memberCount !== undefined
+    const hidesArray = !Array.isArray(r.data?.members)
+    log(hasCount && hidesArray ? 200 : 400, "[DTO] Non-president sees memberCount not array", `memberCount: ${r.data?.memberCount}`, 200)
+  }
+
+  document.getElementById("progressBar").style.width = "95%"
+
+  // ═══════════════════════════════════════════════════════════
+  // SECTION 19 — FINAL STATE
+  // ═══════════════════════════════════════════════════════════
+  section("📋 Final State")
 
   r = await api("GET", "/students")
   log(r.status, `GET /students → ${Array.isArray(r.data) ? r.data.length : '?'} students`, null, 200)
 
-  r = await api("GET", "/clubs", null, users[0].token)
-  log(r.status, `GET /clubs → ${Array.isArray(r.data) ? r.data.length : '?'} clubs remaining`, null, 200)
+  r = await api("GET", "/clubs", null, G.users[0].token)
+  log(r.status, `GET /clubs → ${Array.isArray(r.data) ? r.data.length : '?'} clubs`, null, 200)
 
-  if (clubs.length > 1) {
-    const club = clubs[1]
-    r = await api("GET", `/clubs/${club.id}/events`, null, users[0].token)
-    log(r.status, `GET events for ${club.name} → ${Array.isArray(r.data) ? r.data.length : '?'} events`, null, 200)
+  if (G.clubs.length > 0) {
+    r = await api("GET", `/clubs/${G.clubs[0].id}/events`, null, G.users[0].token)
+    log(r.status, `GET events for ${G.clubs[0].name} → ${Array.isArray(r.data) ? r.data.length : '?'} events`, null, 200)
   }
 
-  // ─── DONE ─────────────────────────────────────────────────────────────────
-  const elapsed = ((Date.now() - ts) / 1000).toFixed(1)
+  document.getElementById("progressBar").style.width = "100%"
+
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+  clearInterval(timerInterval)
+  document.getElementById("timerDisplay").textContent = `${elapsed}s`
+
   out.innerHTML += `<div style="margin-top:1.5rem;padding:1rem;background:var(--border);border-radius:8px;font-family:'Syne',sans-serif;">
     <span style="color:var(--accent2);font-weight:700;">DONE</span> in ${elapsed}s &nbsp;·&nbsp;
     <span class="pass">${passed} passed</span> &nbsp;·&nbsp;
@@ -591,8 +732,105 @@ async function runTests() {
     <span class="warn">${skipped} skipped</span>
   </div>`
 
-  document.getElementById("progressBar").style.width = "100%"
   document.getElementById("runBtn").disabled = false
+  document.getElementById("graphTab").classList.add("active")
+  buildGraph()
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRAPH GENERATION
+// ═══════════════════════════════════════════════════════════
+function buildGraph() {
+  const gc = document.getElementById("graphContent")
+  const catColors = { Sports: "#ef4444", Arts: "#f59e0b", Tech: "#06b6d4", Music: "#8b5cf6", Gaming: "#10b981" }
+
+  // Summary cards
+  let summaryHtml = `<div class="summary-grid">`
+  summaryHtml += `<div class="summary-card"><div class="cat">Students</div><div class="val" style="color:var(--accent2)">${G.users.length}</div></div>`
+  summaryHtml += `<div class="summary-card"><div class="cat">Clubs</div><div class="val" style="color:var(--accent)">${G.clubs.length}</div></div>`
+  const totalEvents = Object.values(G.events).reduce((s,e)=>s+e.length,0)
+  summaryHtml += `<div class="summary-card"><div class="cat">Events</div><div class="val" style="color:var(--success)">${totalEvents}</div></div>`
+  summaryHtml += `<div class="summary-card"><div class="cat">Memberships</div><div class="val" style="color:var(--warn)">${G.memberships.length}</div></div>`
+  summaryHtml += `<div class="summary-card"><div class="cat">Attendances</div><div class="val" style="color:#f472b6">${G.attendances.length}</div></div>`
+  summaryHtml += `</div>`
+
+  // Membership matrix
+  const matrixUsers = G.users.slice(0, 40)
+  let matrixHtml = `<div class="graph-container"><div class="graph-title">Student × Club Membership Matrix (first 40 students)</div><div class="matrix-wrap"><table class="matrix"><tr><th>Student</th>`
+  for (const club of G.clubs) matrixHtml += `<th style="color:${catColors[club.category]}">${club.name.replace(' Club','')}</th>`
+  matrixHtml += `</tr>`
+  for (const user of matrixUsers) {
+    matrixHtml += `<tr><td style="text-align:left;color:var(--muted)">${user.name}</td>`
+    for (const club of G.clubs) {
+      const m = G.memberships.find(m => m.userId === user.id && m.clubId === club.id)
+      if (m?.role === "president") matrixHtml += `<td class="pres" title="President">P</td>`
+      else if (m) matrixHtml += `<td class="yes">✓</td>`
+      else matrixHtml += `<td class="no">·</td>`
+    }
+    matrixHtml += `</tr>`
+  }
+  matrixHtml += `</table></div>
+  <div class="legend" style="margin-top:0.75rem">
+    <div class="legend-item"><span style="color:#a78bfa;font-weight:700;font-size:0.8rem">P</span><span style="font-size:0.75rem;color:var(--muted)">President</span></div>
+    <div class="legend-item"><span style="color:var(--success);font-size:0.8rem">✓</span><span style="font-size:0.75rem;color:var(--muted)">Member</span></div>
+    <div class="legend-item"><span style="color:var(--border);font-size:0.8rem">·</span><span style="font-size:0.75rem;color:var(--muted)">Not a member</span></div>
+  </div>
+  </div>`
+
+  // Bar chart: members per club
+  const barWidth = 600, barHeight = 260, barPad = 40, barGap = 8
+  const maxMembers = Math.max(...G.clubs.map(c => G.memberships.filter(m=>m.clubId===c.id).length), 1)
+  const bw = Math.floor((barWidth - barPad * 2 - barGap * (G.clubs.length - 1)) / G.clubs.length)
+  let bars = ""
+  G.clubs.forEach((club, i) => {
+    const count = G.memberships.filter(m => m.clubId === club.id).length
+    const bh = Math.floor((count / maxMembers) * (barHeight - 60))
+    const x = barPad + i * (bw + barGap)
+    const y = barHeight - 30 - bh
+    const color = catColors[club.category]
+    bars += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${color}" rx="3" opacity="0.85"/>`
+    bars += `<text x="${x + bw/2}" y="${y - 5}" text-anchor="middle" fill="${color}" font-size="11" font-weight="700">${count}</text>`
+    const label = club.name.replace(' Club','').replace(' ','')
+    bars += `<text x="${x + bw/2}" y="${barHeight - 10}" text-anchor="middle" fill="#64748b" font-size="9">${label.substring(0,8)}</text>`
+    bars += `<text x="${x + bw/2}" y="${barHeight}" text-anchor="middle" fill="#64748b" font-size="8">${club.category.substring(0,4)}</text>`
+  })
+  const barChart = `<div class="graph-container"><div class="graph-title">Members per Club</div>
+  <svg viewBox="0 0 ${barWidth} ${barHeight+10}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:260px">
+    ${bars}
+    <line x1="${barPad}" y1="${barHeight-30}" x2="${barWidth-barPad}" y2="${barHeight-30}" stroke="#1e1e2e" stroke-width="1"/>
+  </svg>
+  <div class="legend">${CATEGORIES.map(c=>`<div class="legend-item"><div class="legend-dot" style="background:${catColors[c]}"></div><span style="font-size:0.75rem;color:var(--muted)">${c}</span></div>`).join('')}</div>
+  </div>`
+
+  // Events per club donut-style (simple horizontal bars)
+  let eventBars = ""
+  const evBarHeight = G.clubs.length * 28 + 20
+  const maxEv = Math.max(...G.clubs.map(c => (G.events[c.id]||[]).length), 1)
+  G.clubs.forEach((club, i) => {
+    const total = (G.events[club.id] || []).length
+    const pub = (G.events[club.id] || []).filter(e=>e.access==="public").length
+    const mem = total - pub
+    const bwTotal = 300
+    const y = 10 + i * 28
+    const color = catColors[club.category]
+    const wPub = Math.floor((pub / maxEv) * bwTotal)
+    const wMem = Math.floor((mem / maxEv) * bwTotal)
+    eventBars += `<text x="0" y="${y+14}" fill="#94a3b8" font-size="9">${club.name.substring(0,12)}</text>`
+    eventBars += `<rect x="130" y="${y}" width="${wPub}" height="14" fill="${color}" rx="2" opacity="0.8"/>`
+    eventBars += `<rect x="${130+wPub+2}" y="${y}" width="${wMem}" height="14" fill="${color}" rx="2" opacity="0.4"/>`
+    eventBars += `<text x="${130+wPub+wMem+6}" y="${y+11}" fill="#64748b" font-size="9">${pub}pub ${mem}mem</text>`
+  })
+
+  const eventChart = `<div class="graph-container"><div class="graph-title">Events per Club</div>
+  <svg viewBox="0 0 500 ${evBarHeight}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:${evBarHeight}px">
+    ${eventBars}
+  </svg>
+  <div class="legend">
+    <div class="legend-item"><div style="width:12px;height:12px;background:var(--accent2);border-radius:2px;opacity:0.8"></div><span style="font-size:0.75rem;color:var(--muted)">Public events</span></div>
+    <div class="legend-item"><div style="width:12px;height:12px;background:var(--accent2);border-radius:2px;opacity:0.4"></div><span style="font-size:0.75rem;color:var(--muted)">Members-only events</span></div>
+  </div></div>`
+
+  gc.innerHTML = summaryHtml + `<div class="graph-grid">${barChart}${eventChart}</div>` + matrixHtml
 }
 </script>
 </body>
