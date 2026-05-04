@@ -69,3 +69,21 @@ export const deleteClub = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+export const joinClub = async (req, res) => {
+    try {
+        const club = await clubService.findAllClubsById(req.params.id)
+        if (!club) return res.status(404).json({ error: "Club not found" })
+
+        if (club.members.length >= club.capacity)
+            return res.status(400).json({ error: "Club is full" })
+
+        const updated = await clubService.updateClubService(req.params.id, {
+            $addToSet: { members: req.auth.userId }
+        })
+        res.json(clubPublicDTO(updated))
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+}

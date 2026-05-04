@@ -1,5 +1,6 @@
-import * as eventService from "../services/eventService.js"
+import * as eventService from "../services/eventServiceMongoDB.js"
 import { eventPublicDTO, eventOwnerDTO } from "../dto/event-dto.js"
+import Club from "../models/clubModel.js"
 
 
 export const getAllEvents = async (req, res) => {
@@ -71,7 +72,8 @@ export const joinEvent = async (req, res) => {
         if (!event) return res.status(404).json({ error: "Event not found" })
 
         if (event.access === "members_only") {
-            const isMember = req.club.members.some(
+            const club = await Club.findById(req.params.clubId)
+            const isMember = club.members.some(
                 (memberId) => memberId.toString() === req.auth.userId
             )
             if (!isMember) return res.status(403).json({ error: "This event is for club members only" })

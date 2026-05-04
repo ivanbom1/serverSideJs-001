@@ -47,7 +47,7 @@ export const createStudent = async (req, res) => {
     
     } catch (error) {
 
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 
