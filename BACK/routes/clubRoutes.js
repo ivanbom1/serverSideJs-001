@@ -9,5 +9,6 @@ clubRouter.get("/:id", authCheck, clubController.getClubById)
 clubRouter.post("/", authCheck, clubController.createClub)
 clubRouter.put("/:id", authCheck, clubController.updateClub)
 clubRouter.delete("/:id", authCheck, clubController.deleteClub)
+clubRouter.post("/:id/join", authCheck, clubController.joinClub)
 
 export default clubRouter
