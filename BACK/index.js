@@ -6,6 +6,8 @@ import studentRouter from "./routes/studentsRoutes.js";
 
 import clubRouter from "./routes/clubRoutes.js"
 
+import eventRouter from "./routes/eventRoutes.js"
+
 const app = express();
 const port = 3000;
 
@@ -17,6 +19,7 @@ app.use(cors());
 app.use(express.static("public"))
 app.use("/api/students", studentRouter);
 app.use("/api/clubs", clubRouter)
+app.use("/api/clubs/:clubId/events", eventRouter)
 
 app.get("/", (req, res) => {
     res.send("Server is running ...");
